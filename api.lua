@@ -36,6 +36,11 @@ function minigame.set_game(def)
 	def.on_die = def.on_die or (function(player)
 	end)
 	
+	def.on_win = def.on_win or (function(player)
+		minetest.chat_send_all("[game] " .. minigame.game.players_playing[1] .. " won!")
+		minigame.game.stop()
+	end)
+	
 	def.on_respawn = def.on_respawn or (function(player)
 		if minigame.game.respawn then
 			player:setpos(minigame.game.spawns[math.random(#minigame.game.spawns)])
@@ -63,9 +68,8 @@ function minigame.set_game(def)
 			end, player)
 			
 			-- TODO
-			if #minigame.game.players_playing < 2 then
-				minetest.chat_send_all("[game] " .. minigame.game.players_playing[1] .. " won!")
-				minigame.game.stop()
+			if minigame.game.is_running and #minigame.game.players_playing < 2 then
+				minigame.game.on_win()
 			end
 		end
 	end)
