@@ -1,7 +1,8 @@
 #Minigame
 ####By cdqwertz
-This is a mod which provides an api to register minigames easily.
-*WIP*
+This mod provides an api to register minigames easily.
+
+__WIP__
 
 ###License
 see LICENSE.txt
