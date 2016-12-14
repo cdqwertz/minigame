@@ -5,7 +5,7 @@ function minigame.set_game(def)
 	def.lobby = def.lobby or {x = 0, y = 50, z = 0}
 	def.respawn = def.respawn or false
 	def.physics = def.physics or {}
-	def.min_players = 2
+	def.min_players = def.min_players or 2
 	def.goal = def.goal or {
 		type = "default"
 	}
