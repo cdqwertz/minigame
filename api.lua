@@ -6,9 +6,18 @@ function minigame.set_game(def)
 	def.respawn = def.respawn or false
 	def.physics = def.physics or {}
 	def.min_players = 2
+	def.goal = def.goal or {
+		type = "default"
+	}
+	
 	def.is_running = false
 	
+	def.load = def.load or (function()
+	end)
+	
 	def.start = def.start or (function()
+		minigame.game.load() -- load map, fill chests...
+	
 		for i, name in ipairs(minigame.game.players) do
 			local player = minetest.get_player_by_name(name)
 			player:setpos(minigame.game.spawns[math.random(#minigame.game.spawns)])
@@ -67,9 +76,10 @@ function minigame.set_game(def)
 				end
 			end, player)
 			
-			-- TODO
-			if minigame.game.is_running and #minigame.game.players_playing < 2 then
-				minigame.game.on_win()
+			if minigame.game.goal.type == "default" then
+				if minigame.game.is_running and #minigame.game.players_playing < 2 then
+					minigame.game.on_win()
+				end
 			end
 		end
 	end)
