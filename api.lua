@@ -1,14 +1,18 @@
 function minigame.set_game(def)
 	def.players = def.players or {}
 	def.players_playing = {}
-	def.spawns = def.spawns or {{x = 0, y = 0, z = 0}}
-	def.lobby = def.lobby or {x = 0, y = 50, z = 0}
+	
 	def.respawn = def.respawn or false
-	def.physics = def.physics or {}
+	def.clear_inventory = def.clear_inventory or false
 	def.min_players = def.min_players or 2
+	
+	def.physics = def.physics or {}
 	def.goal = def.goal or {
 		type = "default"
 	}
+	
+	def.spawns = def.spawns or {{x = 0, y = 0, z = 0}}
+	def.lobby = def.lobby or {x = 0, y = 50, z = 0}
 	
 	def.is_running = false
 	
@@ -24,11 +28,18 @@ function minigame.set_game(def)
 			
 			table.insert(minigame.game.players_playing, name)
 			player:set_physics_override(minigame.game.physics)
+			
+			if minigame.game.clear_inventory then
+				player:get_inventory():set_list("main", {})
+			end
 		end
+		
+		minigame.game.is_running = true
 	end)
 	
 	def.stop = def.stop or (function(player)
 		minigame.game.players_playing = {}
+		minigame.game.is_running = false
 		
 		for i, name in ipairs(minigame.game.players) do
 			local player = minetest.get_player_by_name(name)
@@ -39,6 +50,10 @@ function minigame.set_game(def)
 				gravity = 1.0,
 				sneak = true
 			})
+			
+			if minigame.game.clear_inventory then
+				player:get_inventory():set_list("main", {})
+			end
 		end
 	end)
 	
@@ -119,6 +134,12 @@ minetest.register_on_leaveplayer(function(player)
 	for i, name in ipairs(minigame.game.players) do
 		if name == player:get_player_name() then
 			table.remove(minigame.game.players, i)
+		end
+	end
+	
+	if minigame.game.goal.type == "default" then
+		if minigame.game.is_running and #minigame.game.players_playing < 2 then
+			minigame.game.on_win()
 		end
 	end
 end)
